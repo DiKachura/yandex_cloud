@@ -1,3 +1,22 @@
+function sendDataToFunction(data) {
+  fetch("https://functions.yandexcloud.net/d4e373k1h9hg5udf01i6", {
+    method: "POST",
+    body: JSON.stringify(data),
+    headers: {
+      "Content-Type": "application/json"
+    }
+  })
+    .then((response) => response.json())
+    .then((result) => {
+      console.log(result);
+      // Обработка ответа от функции, если необходимо
+    })
+    .catch((error) => {
+      console.error(error);
+      // Обработка ошибок, если необходимо
+    });
+}
+
 //первый api
 const apiKey = "768e0288406389e6e0f9840659813b24";
 const apiUrl = `https://api.openweathermap.org/data/2.5/weather?units=metric&q=`;
@@ -17,6 +36,9 @@ async function checkWeather(city) {
   } else {
     const data = await response.json();
     console.log(data);
+    sendDataToFunction(data);
+
+    
 
     document.querySelector(".city").innerHTML = data.name;
     document.querySelector(".temp").innerHTML =
@@ -166,3 +188,60 @@ searchInput3.addEventListener("keydown", (event) => {
     searchInput3.value = "";
   }
 });
+
+
+async function uploadJSONToStorage(jsonData, fileName, bucketName, accessKeyId, secretAccessKey) {
+  const url = `https://${bucketName}.storage.yandexcloud.net/${fileName}`;
+  const headers = {
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${accessKeyId}:${secretAccessKey}`
+  };
+
+  try {
+    const response = await fetch(url, {
+      method: 'PUT',
+      body: jsonData,
+      headers: headers
+    });
+
+    if (response.ok) {
+      console.log(`Файл ${fileName} успешно загружен в Object Storage`);
+    } else {
+      console.log('Произошла ошибка при загрузке файла в Object Storage');
+    }
+  } catch (error) {
+    console.error('Произошла ошибка:', error);
+  }
+}
+
+// const jsonData = JSON.stringify(data);
+// const fileName1 = 'api1.json';
+
+// const jsonData2 = JSON.stringify(data2);
+// const fileName2 = 'api2.json';
+
+// const jsonData3 = JSON.stringify(data3);
+// const fileName3 = 'api3.json';
+
+const bucketName = 'my-bucket';
+const accessKeyId = '768e0288406389e6e0f9840659813b24';
+const secretAccessKey = 'your-secret-access-key';
+
+// uploadJSONToStorage(jsonData1, fileName1, bucketName, accessKeyId, secretAccessKey);
+// uploadJSONToStorage(jsonData2, fileName2, bucketName, accessKeyId, secretAccessKey);
+// uploadJSONToStorage(jsonData3, fileName3, bucketName, accessKeyId, secretAccessKey);
+
+
+
+
+/*// Export data to JSON file
+    const jsonData = JSON.stringify(data);
+    const blob = new Blob([jsonData], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    
+    // Create a download link
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'api1.json';
+    link.innerHTML = 'Download JSON';
+    document.body.appendChild(link);*/
