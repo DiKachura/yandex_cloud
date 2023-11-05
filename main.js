@@ -1,21 +1,4 @@
-function sendDataToFunction(data) {
-  fetch("https://functions.yandexcloud.net/d4e373k1h9hg5udf01i6", {
-    method: "POST",
-    body: JSON.stringify(data),
-    headers: {
-      "Content-Type": "application/json"
-    }
-  })
-    .then((response) => response.json())
-    .then((result) => {
-      console.log(result);
-      // Обработка ответа от функции, если необходимо
-    })
-    .catch((error) => {
-      console.error(error);
-      // Обработка ошибок, если необходимо
-    });
-}
+
 
 //первый api
 const apiKey = "768e0288406389e6e0f9840659813b24";
@@ -36,7 +19,25 @@ async function checkWeather(city) {
   } else {
     const data = await response.json();
     console.log(data);
-    sendDataToFunction(data);
+    async function sendDataToFunction(data) {
+      try {
+        const response = await fetch('https://functions.yandexcloud.net/d4erv7grn5nh8qq37ivr', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          //body: JSON.stringify(data)
+        });
+    
+        if (response.ok) {
+          console.log('Данные успешно отправлены в функцию');
+        } else {
+          console.error('Произошла ошибка при отправке данных в функцию');
+        }
+      } catch (error) {
+        console.error('Произошла ошибка при отправке данных в функцию:', error);
+      }
+    }
 
     
 
